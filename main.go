@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"vTeacher/config"
+	"vTeacher/dao/mysql"
 	"vTeacher/log"
 
 	"vTeacher/pkg/snowflake"
@@ -12,9 +13,9 @@ import (
 // @host 127.0.0.1:8081
 // @BasePath /api/v1/
 func main() {
-	//var confFile string
-	//flag.StringVar(&confFile, "conf", "./conf/config.yaml", "配置文件")
-	//flag.Parse()
+	// var confFile string
+	// flag.StringVar(&confFile, "conf", "./conf/config.yaml", "配置文件")
+	// flag.Parse()
 	// 加载配置
 	if err := config.Init(); err != nil {
 		fmt.Printf("load config failed, err:%v\n", err)
@@ -24,12 +25,12 @@ func main() {
 		fmt.Printf("init logger failed, err:%v\n", err)
 		return
 	}
-	/*	if err := mysql.Init(settings.Conf.MySQLConfig); err != nil {
-			fmt.Printf("init mysql failed, err:%v\n", err)
-			return
-		}
-		defer mysql.Close() // 程序退出关闭数据库连接
-
+	if err := mysql.Init(config.Conf.MySQLConfig); err != nil {
+		fmt.Printf("init mysql failed, err:%v\n", err)
+		return
+	}
+	defer mysql.Close() // 程序退出关闭数据库连接
+	/*
 		if err := redis.Init(settings.Conf.RedisConfig); err != nil {
 			fmt.Printf("init redis failed, err:%v\n", err)
 			return

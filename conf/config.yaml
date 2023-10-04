@@ -16,11 +16,11 @@ log:
   max_backups: 5
 
 mysql:
-  host: "127.0.0.1"
+  host: "database.nginx.show"
   port: 3306
-  user: "root"
-  password: "1154459434"
-  dbname: "bluebell"
+  user: "vTeacher"
+  password: "vTeacher1154459434"
+  dbname: "vTeacher"
   max_open_conns: 200
   max_idle_conns: 50
 

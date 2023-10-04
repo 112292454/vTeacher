@@ -16,9 +16,9 @@ func SetupRouter(mode string) *gin.Engine {
 	if mode == gin.ReleaseMode {
 		gin.SetMode(gin.ReleaseMode) // 设置成发布模式
 	}
-	//初始化 gin Engine  新建一个没有任何默认中间件的路由
+	// 初始化 gin Engine  新建一个没有任何默认中间件的路由
 	r := gin.New()
-	//设置中间件
+	// 设置中间件
 	r.Use(log.GinLogger(),
 		log.GinRecovery(true),                              // Recovery 中间件会 recover掉项目可能出现的panic，并使用zap记录相关日志
 		middlewares.RateLimitMiddleware(2*time.Second, 40), // 每两秒钟添加十个令牌  全局限流
@@ -31,12 +31,15 @@ func SetupRouter(mode string) *gin.Engine {
 	})
 
 	// 注册swagger
-	//r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	// r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	v1 := r.Group("/api/v1")
+	v1 := r.Group("/api/v1/users")
 	// 注册登陆业务
-	//v1.POST("/login", controller.LoginHandler) // 登陆业务
-	v1.POST("/signup", controller.SignUpHandler) // 注册业务
+	// v1.POST("/login", controller.LoginHandler) // 登陆业务
+	v1.POST("/", controller.SignUpHandler) // 注册业务
+	v1.GET("/:uid", controller.GetUserHandler)
+	v1.GET("/", controller.GetAllUserHandler)
+
 	/*v1.GET("/refresh_token", controller.RefreshTokenHandler) // 刷新accessToken
 	// 帖子业务
 	v1.GET("/posts", controller.PostListHandler)      // 分页展示帖子列表

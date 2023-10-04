@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"errors"
+	"log"
 	"vTeacher/entity"
 	"vTeacher/pkg/snowflake"
 )
@@ -12,7 +13,7 @@ import (
 // 把每一步数据库操作封装成函数
 // 待logic层根据业务需求调用
 
-const secret = "huchao.vip"
+const secret = "nginx.show"
 
 // encryptPassword 对密码进行加密
 func encryptPassword(data []byte) (result string) {
@@ -22,10 +23,10 @@ func encryptPassword(data []byte) (result string) {
 }
 
 // CheckUserExist 检查指定用户名的用户是否存在
-func CheckUserExist(username string) (error error) {
-	sqlStr := `select count(user_id) from user where username = ?`
+func CheckUserExist(user_name string) (error error) {
+	sqlStr := `select count(user_id) from user where user_name = ?`
 	var count int
-	if err := db.Get(&count, sqlStr, username); err != nil {
+	if err := db.Get(&count, sqlStr, user_name); err != nil {
 		return err
 	}
 	if count > 0 {
@@ -39,13 +40,13 @@ func InsertUser(user entity.User) (error error) {
 	// 对密码进行加密
 	user.Password = encryptPassword([]byte(user.Password))
 	// 执行SQL语句入库
-	sqlstr := `insert into user(user_id,username,password,email,gender) values(?,?,?,?,?)`
-	_, err := db.Exec(sqlstr, user.UserID, user.UserName, user.Password, user.Email, user.Gender)
+	sqlstr := `insert into user(user_name,password,email) values(?,?,?)`
+	_, err := db.Exec(sqlstr, user.UserName, user.Password, user.Email)
 	return err
 }
 
 func Register(user *entity.User) (err error) {
-	sqlStr := "select count(user_id) from user where username = ?"
+	sqlStr := "select count(user_id) from user where user_name = ?"
 	var count int64
 	err = db.Get(&count, sqlStr, user.UserName)
 	if err != nil && err != sql.ErrNoRows {
@@ -63,15 +64,15 @@ func Register(user *entity.User) (err error) {
 	// 生成加密密码
 	password := encryptPassword([]byte(user.Password))
 	// 把用户插入数据库
-	sqlStr = "insert into user(user_id, username, password) values (?,?,?)"
-	_, err = db.Exec(sqlStr, userID, user.UserName, password)
+	sqlStr = "insert into user(user_id, user_name, password,email) values (?,?,?,?)"
+	_, err = db.Exec(sqlStr, userID, user.UserName, password, user.Email)
 	return
 }
 
 // Login 登录业务
 func Login(user *entity.User) (err error) {
 	originPassword := user.Password // 记录一下原始密码(用户登录的密码)
-	sqlStr := "select user_id, username, password from user where username = ?"
+	sqlStr := "select user_id, user_name, password from user where user_name = ?"
 	err = db.Get(user, sqlStr, user.UserName)
 	// 查询数据库出错
 	if err != nil && err != sql.ErrNoRows {
@@ -89,10 +90,30 @@ func Login(user *entity.User) (err error) {
 	return nil
 }
 
-// GetUserByID 根据ID查询作者信息
+// GetUserByID 根据ID查询用户信息
 func GetUserByID(id uint64) (user *entity.User, err error) {
 	user = new(entity.User)
-	sqlStr := `select user_id, username from user where user_id = ?`
+	sqlStr := `select user_id, user_name,email,is_admin,level,nick_name from user where user_id = ?`
 	err = db.Get(user, sqlStr, id)
 	return
+}
+
+// GetUserByID 根据ID查询用户信息
+func GetUserByEmail(mail string) (user *entity.User, err error) {
+	user = new(entity.User)
+	sqlStr := `select user_id, user_name,email from user where email = ?`
+	err = db.Get(user, sqlStr, mail)
+	return
+}
+
+// queryAllUsersFromDB 从数据库查询所有用户信息
+func QueryAllUsers() ([]*entity.User, error) {
+	var users []*entity.User
+	sqlStr := `select user_id, user_name, email, is_admin, level, nick_name from user`
+	err := db.Select(&users, sqlStr)
+	if err != nil {
+		log.Printf("从数据库查询用户信息失败：%v\n", err)
+		return nil, err
+	}
+	return users, nil
 }

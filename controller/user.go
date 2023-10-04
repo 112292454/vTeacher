@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
+	"strconv"
 	"vTeacher/config"
 	"vTeacher/dao/mysql"
 	"vTeacher/entity"
@@ -23,7 +24,7 @@ func SignUpHandler(c *gin.Context) {
 		errs, ok := err.(validator.ValidationErrors)
 		if !ok {
 			// 非validator.ValidationErrors类型错误直接返回
-			entity.ResponseError(c, entity.CodeInvalidParams) // 请求参数错误
+			entity.ResponseError(c, entity.CodeInvalidParams) // user 请求参数错误
 			return
 		}
 		// validator.ValidationErrors类型错误则进行翻译
@@ -41,6 +42,49 @@ func SignUpHandler(c *gin.Context) {
 		entity.ResponseError(c, entity.CodeServerBusy)
 		return
 	}
-	//返回响应
-	entity.ResponseSuccess(c, nil)
+	user, err := logic.GetUserByEmail(fo.Email)
+	if err != nil {
+		entity.ResponseError(c, entity.CodeServerBusy)
+		return
+	}
+	// 返回响应
+	entity.ResponseSuccess(c, user)
+}
+
+// GetUserHandler 注册业务
+func GetUserHandler(c *gin.Context) {
+	var id, err = strconv.Atoi(c.Param("uid"))
+	if err != nil {
+		entity.ResponseError(c, entity.CodeInvalidParams)
+		return
+	}
+	user, err := logic.GetUser(id)
+	// 3.业务处理 —— 获取用户
+	if err != nil {
+		zap.L().Error("logic.getUser failed", zap.Error(err))
+		if err.Error() == mysql.ErrorUserExit {
+			entity.ResponseError(c, entity.CodeUserNotExist)
+			return
+		}
+		entity.ResponseError(c, entity.CodeServerBusy)
+		return
+	}
+	// 返回响应
+	entity.ResponseSuccess(c, user)
+}
+
+// GetUserHandler 注册业务
+func GetAllUserHandler(c *gin.Context) {
+	users, err := logic.GetAllUsers()
+	if err != nil {
+		zap.L().Error("logic.getUser failed", zap.Error(err))
+		if err.Error() == mysql.ErrorUserExit {
+			entity.ResponseError(c, entity.CodeUserNotExist)
+			return
+		}
+		entity.ResponseError(c, entity.CodeServerBusy)
+		return
+	}
+	// 返回响应
+	entity.ResponseSuccess(c, users)
 }
