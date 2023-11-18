@@ -9,6 +9,7 @@ package entity
 type MyCode int64
 
 const (
+	code                  MyCode = 000
 	CodeSuccess           MyCode = 1000
 	CodeInvalidParams     MyCode = 1001
 	CodeUserExist         MyCode = 1002
