@@ -41,6 +41,8 @@ func SetupRouter(mode string) *gin.Engine {
 	users.GET("/:uid", controller.GetUserHandler)
 	users.GET("/", controller.GetAllUserHandler)
 
+	users.PUT("/email/:uid", controller.SetUserEmailHandler)
+
 	login := v1.Group("/login")
 	login.POST("/", controller.LoginHandler)
 

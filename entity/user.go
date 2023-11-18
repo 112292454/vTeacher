@@ -14,6 +14,7 @@ type User struct {
 	Email        string `json:"email" db:"email"` // 邮箱
 	IsAdmin      bool   `json:"is_admin" db:"is_admin"`
 	Level        int    `json:"level" db:"level"`
+	Avatar       string `json:"avatar" db:"avatar"`
 	AccessToken  string
 	RefreshToken string
 }
@@ -59,6 +60,14 @@ type LoginRequest struct {
 	Password string `json:"password" binding:"required"`
 	// 用户名
 	Username string `json:"username" binding:"required"`
+}
+
+// Request
+type UpdateEmailRequest struct {
+	// 邮箱注册码
+	Code string `json:"code"`
+	// 新的注册邮箱
+	Email string `json:"email" binding:"required"`
 }
 
 // UnmarshalJSON 为RegisterForm类型实现自定义的UnmarshalJSON方法

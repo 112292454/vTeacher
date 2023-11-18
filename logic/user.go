@@ -106,3 +106,29 @@ func GetUserByEmail(mail string) (user *entity.User, error error) {
 	user.RefreshToken = refreshToken
 	return
 }
+
+func UpdateUser(user *entity.User) (i int64, error error) {
+	res, err := mysql.UpdateUser(user)
+	if err != nil {
+		return 0, err
+	}
+	// 生成JWT
+	accessToken, refreshToken, err := jwt.GenToken(user.UserID, user.UserName)
+	if err != nil {
+		return
+	}
+	user.AccessToken = accessToken
+	user.RefreshToken = refreshToken
+	return res.RowsAffected()
+}
+
+func UpdateEmail(id int, email string) (i int64, error error) {
+	user, err := mysql.InternalGetUserByID(uint64(id))
+	if err != nil {
+		return 0, err
+	}
+
+	// 业务处理 —— 修改邮箱
+	user.Email = email
+	return UpdateUser(user)
+}

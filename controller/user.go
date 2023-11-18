@@ -89,7 +89,7 @@ func LoginHandler(c *gin.Context) {
 	})
 }
 
-// GetUserHandler 注册业务
+// GetUser
 func GetUserHandler(c *gin.Context) {
 	var id, err = strconv.Atoi(c.Param("uid"))
 	if err != nil {
@@ -111,7 +111,7 @@ func GetUserHandler(c *gin.Context) {
 	entity.ResponseSuccess(c, user)
 }
 
-// GetUserHandler 注册业务
+// GetAllUser
 func GetAllUserHandler(c *gin.Context) {
 	users, err := logic.GetAllUsers()
 	if err != nil {
@@ -125,4 +125,38 @@ func GetAllUserHandler(c *gin.Context) {
 	}
 	// 返回响应
 	entity.ResponseSuccess(c, users)
+}
+
+func SetUserEmailHandler(c *gin.Context) {
+	var id, err = strconv.Atoi(c.Param("uid"))
+	var u *entity.UpdateEmailRequest
+	if err := c.ShouldBindJSON(&u); err != nil {
+		// 请求参数有误，直接返回响应
+		zap.L().Error("Login with invalid param", zap.Error(err))
+		// 判断err是不是 validator.ValidationErrors类型的errors
+		errs, ok := err.(validator.ValidationErrors)
+		if !ok {
+			// 非validator.ValidationErrors类型错误直接返回
+			entity.ResponseError(c, entity.CodeInvalidParams) // 请求参数错误
+			return
+		}
+		// validator.ValidationErrors类型错误则进行翻译
+		entity.ResponseErrorWithMsg(c, entity.CodeInvalidParams, config.RemoveTopStruct(errs.Translate(config.Trans)))
+		return
+	}
+
+	// 3.业务处理 —— 修改邮箱
+	// u.code郵箱驗證碼暫時不校驗
+	effected, err := logic.UpdateEmail(id, u.Email)
+	if err != nil {
+		zap.L().Error("logic.UpdateEmail failed", zap.Error(err))
+		if err.Error() == mysql.ErrorUserExit {
+			entity.ResponseError(c, entity.CodeUserNotExist)
+			return
+		}
+		entity.ResponseError(c, entity.CodeServerBusy)
+		return
+	}
+	// 返回响应
+	entity.ResponseSuccess(c, effected)
 }

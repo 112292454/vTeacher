@@ -97,6 +97,12 @@ func GetUserByID(id uint64) (user *entity.User, err error) {
 	err = db.Get(user, sqlStr, id)
 	return
 }
+func InternalGetUserByID(id uint64) (user *entity.User, err error) {
+	user = new(entity.User)
+	sqlStr := `select user_id, user_name,email,password,avatar,is_admin,level,nick_name from user where user_id = ?`
+	err = db.Get(user, sqlStr, id)
+	return
+}
 
 // GetUserByID 根据ID查询用户信息
 func GetUserByEmail(mail string) (user *entity.User, err error) {
@@ -116,4 +122,16 @@ func QueryAllUsers() ([]*entity.User, error) {
 		return nil, err
 	}
 	return users, nil
+}
+
+func UpdateUser(user *entity.User) (sql.Result, error) {
+	sqlStr := `UPDATE vTeacher.user
+SET avatar = :avatar, email = :email, is_admin = :is_admin, level = :level, nick_name = :nick_name, password = :password, user_name = :user_name
+WHERE user_id=:user_id;`
+	res, err := db.NamedExec(sqlStr, user)
+	if err != nil {
+		log.Printf("从数据库修改用户信息失败：%v\n", err)
+		return nil, err
+	}
+	return res, nil
 }
