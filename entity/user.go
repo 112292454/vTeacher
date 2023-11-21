@@ -53,6 +53,12 @@ type LoginForm struct {
 	Password string `json:"password" binding:"required"`
 }
 
+// SetUserEmailForm 修改用户邮箱请求参数
+type SetUserEmailForm struct {
+	Email string `json:"email" bingding:"required"`
+	Code  string `json:"code" binding:""`
+}
+
 // UnmarshalJSON 为RegisterForm类型实现自定义的UnmarshalJSON方法
 func (r *RegisterForm) UnmarshalJSON(data []byte) (err error) {
 	required := struct {

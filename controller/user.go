@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
+	"log"
 	"strconv"
 	"vTeacher/config"
 	"vTeacher/dao/mysql"
@@ -87,4 +88,32 @@ func GetAllUserHandler(c *gin.Context) {
 	}
 	// 返回响应
 	entity.ResponseSuccess(c, users)
+}
+
+func SetUserEmailHandler(c *gin.Context) {
+	var id, _ = strconv.Atoi(c.Param("uid"))
+	// 1.获取请求参数
+	var fo *entity.SetUserEmailForm
+	// 2.校验数据有效性
+	if err := c.ShouldBindJSON(&fo); err != nil {
+		// 请求参数有误，直接返回响应
+		zap.L().Error("SetEmail with invalid param", zap.Error(err))
+		// 判断err是不是 validator.ValidationErrors类型的errors
+		errs, ok := err.(validator.ValidationErrors)
+		if !ok {
+			// 非validator.ValidationErrors类型错误直接返回
+			entity.ResponseError(c, entity.CodeInvalidParams) // user 请求参数错误
+			return
+		}
+		// validator.ValidationErrors类型错误则进行翻译
+		entity.ResponseErrorWithMsg(c, entity.CodeInvalidParams, config.RemoveTopStruct(errs.Translate(config.Trans)))
+		return // 翻译错误
+	}
+	log.Printf("fo: %v\n", fo)
+	num, _ := logic.UpdateEmail(id, fo.Email)
+	if num != 0 {
+		entity.ResponseSuccess(c, num)
+	} else {
+		entity.ResponseError(c, entity.CodeInvalidParams)
+	}
 }

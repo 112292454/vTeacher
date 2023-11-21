@@ -39,7 +39,7 @@ func SetupRouter(mode string) *gin.Engine {
 	v1.POST("/", controller.SignUpHandler) // 注册业务
 	v1.GET("/:uid", controller.GetUserHandler)
 	v1.GET("/", controller.GetAllUserHandler)
-
+	v1.PUT("/email/:uid", controller.SetUserEmailHandler) //
 	/*v1.GET("/refresh_token", controller.RefreshTokenHandler) // 刷新accessToken
 	// 帖子业务
 	v1.GET("/posts", controller.PostListHandler)      // 分页展示帖子列表
