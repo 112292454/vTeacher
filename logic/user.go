@@ -104,32 +104,5 @@ func GetUserByEmail(mail string) (user *entity.User, error error) {
 	}
 	user.AccessToken = accessToken
 	user.RefreshToken = refreshToken
-	return user, nil
-}
-
-func UpdateUser(user *entity.User) (i int64, error error) {
-	res, err := mysql.UpdateUser(user)
-	if err != nil {
-		return 0, err
-	}
-	// 生成JWT
-	accessToken, refreshToken, err := jwt.GenToken(user.UserID, user.UserName)
-	if err != nil {
-		return
-	}
-	user.AccessToken = accessToken
-	user.RefreshToken = refreshToken
-	return res.RowsAffected()
-}
-
-// UpdateEmail id是用户id，email是将设置的新的邮箱
-func UpdateEmail(id int, email string) (i int64, error error) {
-	user, err := mysql.InternalGetUserByID(uint64(id))
-	if err != nil {
-		return 0, err
-	}
-
-	// 业务处理 —— 修改邮箱
-	user.Email = email
-	return UpdateUser(user)
+	return
 }

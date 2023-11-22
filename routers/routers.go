@@ -37,12 +37,10 @@ func SetupRouter(mode string) *gin.Engine {
 	// 用户信息业务
 	users := v1.Group("/users")
 	// v1.POST("/login", controller.LoginHandler) // 登陆业务
-
 	users.POST("/", controller.SignUpHandler) // 注册业务
 	users.GET("/:uid", controller.GetUserHandler)
 	users.GET("/", controller.GetAllUserHandler)
-  users.PUT("/email/:uid", controller.SetUserEmailHandler) //
-  
+
 	login := v1.Group("/login")
 	login.POST("/", controller.LoginHandler)
 

@@ -117,22 +117,3 @@ func QueryAllUsers() ([]*entity.User, error) {
 	}
 	return users, nil
 }
-
-// 获取用户所有信息
-func InternalGetUserByID(id uint64) (user *entity.User, err error) {
-	user = new(entity.User)
-	sqlStr := `select user_id, user_name,email,password,avatar,is_admin,level,nick_name from user where user_id = ?`
-	err = db.Get(user, sqlStr, id)
-	return
-}
-func UpdateUser(user *entity.User) (res sql.Result, err error) {
-	sqlStr := `UPDATE vTeacher.user
-    SET avatar = :avatar, email = :email, is_admin = :is_admin, level = :level, nick_name = :nick_name, password = :password, user_name = :user_name
-WHERE user_id=:user_id;`
-	res, err = db.NamedExec(sqlStr, user)
-	if err != nil {
-		log.Printf("更新用户信息失败：%v\n", err)
-		return nil, err
-	}
-	return res, nil
-}
