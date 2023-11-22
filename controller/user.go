@@ -52,6 +52,44 @@ func SignUpHandler(c *gin.Context) {
 	entity.ResponseSuccess(c, user)
 }
 
+func LoginHandler(c *gin.Context) {
+	// 1、获取请求参数及参数校验
+	var u *entity.LoginRequest
+	if err := c.ShouldBindJSON(&u); err != nil {
+		// 请求参数有误，直接返回响应
+		zap.L().Error("Login with invalid param", zap.Error(err))
+		// 判断err是不是 validator.ValidationErrors类型的errors
+		errs, ok := err.(validator.ValidationErrors)
+		if !ok {
+			// 非validator.ValidationErrors类型错误直接返回
+			entity.ResponseError(c, entity.CodeInvalidParams) // 请求参数错误
+			return
+		}
+		// validator.ValidationErrors类型错误则进行翻译
+		entity.ResponseErrorWithMsg(c, entity.CodeInvalidParams, config.RemoveTopStruct(errs.Translate(config.Trans)))
+		return
+	}
+
+	// 2、业务逻辑处理——登录
+	user, err := logic.Login(u)
+	if err != nil {
+		zap.L().Error("logic.Login failed", zap.String("username", u.Username), zap.Error(err))
+		if err.Error() == mysql.ErrorUserNotExit {
+			entity.ResponseError(c, entity.CodeUserNotExist)
+			return
+		}
+		entity.ResponseError(c, entity.CodeInvalidParams)
+		return
+	}
+	// 3、返回响应
+	entity.ResponseSuccess(c, gin.H{
+		"user_id":       fmt.Sprintf("%d", user.UserID), // js识别的最大值：id值大于1<<53-1  int64: i<<63-1
+		"user_name":     user.UserName,
+		"access_token":  user.AccessToken,
+		"refresh_token": user.RefreshToken,
+	})
+}
+
 // GetUserHandler 注册业务
 func GetUserHandler(c *gin.Context) {
 	var id, err = strconv.Atoi(c.Param("uid"))

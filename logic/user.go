@@ -34,9 +34,9 @@ func SignUp(p *entity.RegisterForm) (error error) {
 }
 
 // Login 登录业务逻辑代码
-func Login(p *entity.LoginForm) (user *entity.User, error error) {
+func Login(p *entity.LoginRequest) (user *entity.User, error error) {
 	user = &entity.User{
-		UserName: p.UserName,
+		UserName: p.Username,
 		Password: p.Password,
 	}
 	if err := mysql.Login(user); err != nil {

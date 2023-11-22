@@ -32,14 +32,20 @@ func SetupRouter(mode string) *gin.Engine {
 
 	// 注册swagger
 	// r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	v1 := r.Group("/api/v1")
 
-	v1 := r.Group("/api/v1/users")
-	// 注册登陆业务
+	// 用户信息业务
+	users := v1.Group("/users")
 	// v1.POST("/login", controller.LoginHandler) // 登陆业务
-	v1.POST("/", controller.SignUpHandler) // 注册业务
-	v1.GET("/:uid", controller.GetUserHandler)
-	v1.GET("/", controller.GetAllUserHandler)
-	v1.PUT("/email/:uid", controller.SetUserEmailHandler) //
+
+	users.POST("/", controller.SignUpHandler) // 注册业务
+	users.GET("/:uid", controller.GetUserHandler)
+	users.GET("/", controller.GetAllUserHandler)
+  users.PUT("/email/:uid", controller.SetUserEmailHandler) //
+  
+	login := v1.Group("/login")
+	login.POST("/", controller.LoginHandler)
+
 	/*v1.GET("/refresh_token", controller.RefreshTokenHandler) // 刷新accessToken
 	// 帖子业务
 	v1.GET("/posts", controller.PostListHandler)      // 分页展示帖子列表
@@ -51,22 +57,22 @@ func SetupRouter(mode string) *gin.Engine {
 	v1.GET("/community/:id", controller.CommunityDetailHandler) // 根据ID查找社区详情
 	// Github热榜
 	v1.GET("/github_trending", controller.GithubTrendingHandler) // Github热榜
-
+	*/
 	// 中间件
-	v1.Use(middlewares.JWTAuthMiddleware()) // 应用JWT认证中间件
+	login.Use(middlewares.JWTAuthMiddleware()) // 应用JWT认证中间件
 	{
-		v1.POST("/post", controller.CreatePostHandler) // 创建帖子
+		// v1.POST("/post", controller.CreatePostHandler) // 创建帖子
+		//
+		// v1.POST("/vote", controller.VoteHandler) // 投票
+		//
+		// v1.POST("/comment", controller.CommentHandler)    // 评论
+		// v1.GET("/comment", controller.CommentListHandler) // 评论列表
 
-		v1.POST("/vote", controller.VoteHandler) // 投票
-
-		v1.POST("/comment", controller.CommentHandler)    // 评论
-		v1.GET("/comment", controller.CommentListHandler) // 评论列表
-
-		v1.GET("/ping", func(c *gin.Context) {
+		login.GET("/ping", func(c *gin.Context) {
 			c.String(http.StatusOK, "pong")
 		})
 	}
-	*/
+
 	pprof.Register(r) // 注册pprof相关路由
 	r.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{

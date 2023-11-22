@@ -6,7 +6,7 @@ start_time: "2022-02-09"
 machine_id: 1
 
 auth:
-  jwt_expire: 8760
+  jwt_expire: 86400000
 
 log:
   level: "debug"
