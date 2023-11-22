@@ -106,14 +106,7 @@ func GetUserByEmail(mail string) (user *entity.User, error error) {
 	user.RefreshToken = refreshToken
 	return user, nil
 }
-func ChangeUser(uid int) (user *entity.User, error error) {
-	user, err := mysql.GetUserByID(uint64(uid))
-	if err != nil {
-		return nil, err
-	}
 
-	return
-}
 func UpdateUser(user *entity.User) (i int64, error error) {
 	res, err := mysql.UpdateUser(user)
 	if err != nil {

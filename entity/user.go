@@ -55,8 +55,8 @@ type LoginForm struct {
 
 // SetUserEmailForm 修改用户邮箱请求参数
 type SetUserEmailForm struct {
-	Email string `json:"email" bingding:"required"`
-	Code  string `json:"code" binding:""`
+	Email string `json:"email" binding:"required"`
+	Code  string `json:"code" `
 }
 
 // UnmarshalJSON 为RegisterForm类型实现自定义的UnmarshalJSON方法
