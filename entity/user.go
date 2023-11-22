@@ -47,11 +47,10 @@ type RegisterForm struct {
 	Password string `json:"password" binding:"required"` // 密码
 }
 
-// LoginForm 登录请求参数
-type LoginForm struct {
-	UserName string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
-}
+// SetUserEmailForm 修改用户邮箱请求参数
+type SetUserEmailForm struct {
+	Email string `json:"email" binding:"required"`
+	Code  string `json:"code" `
 
 // Request
 type LoginRequest struct {
