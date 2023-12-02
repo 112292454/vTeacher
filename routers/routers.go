@@ -41,8 +41,9 @@ func SetupRouter(mode string) *gin.Engine {
 	users.POST("/", controller.SignUpHandler) // 注册业务
 	users.GET("/:uid", controller.GetUserHandler)
 	users.GET("/", controller.GetAllUserHandler)
-  users.PUT("/email/:uid", controller.SetUserEmailHandler) //
-  
+	users.PUT("/email/:uid", controller.SetUserEmailHandler) //
+	v1.PUT("/:uid", controller.SetUserInformationHandler)    //更改用户信息
+	v1.PUT("/pwd/:uid", controller.SetUserPasswordHandler)   //更改用户密码
 	login := v1.Group("/login")
 	login.POST("/", controller.LoginHandler)
 

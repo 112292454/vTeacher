@@ -133,3 +133,32 @@ func UpdateEmail(id int, email string) (i int64, error error) {
 	user.Email = email
 	return UpdateUser(user)
 }
+func SetNewPassword(id int, oldPassword string, newPassword string) (i int64, error error) {
+	user, err := mysql.InternalGetUserByID(uint64(id))
+	if err != nil {
+		return 0, err
+	}
+	if oldPassword == user.Password {
+		user.Password = newPassword
+		return UpdateUser(user)
+	} else {
+		return 0, error
+	}
+
+}
+
+// UpdateInformation id是用户id，nickname是昵称，avatar是头像，password是密码，email是将设置的邮箱，is_admin是是否为管理员
+func UpdateInformation(id int, nickname string, avatar string, password string, email string, is_admin bool) (i int64, error error) {
+	user, err := mysql.InternalGetUserByID(uint64(id))
+	if err != nil {
+		return 0, err
+	}
+	// 业务处理 —— 修改用户信息
+	if (email == user.Email) && (password == user.Password) && (is_admin == true) {
+		user.NickName = nickname
+		user.Avatar = avatar
+		return UpdateUser(user)
+	} else {
+		return 0, error
+	}
+}
