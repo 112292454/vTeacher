@@ -10,7 +10,6 @@ type User struct {
 	UserID       uint64 `json:"userid" db:"user_id"` // 指定json序列化/反序列化时使用小写user_id
 	UserName     string `json:"username" db:"user_name"`
 	NickName     string `json:"nickname" db:"nick_name"`
-	Avatar       string `json:"avatar" db:"avatar"`
 	Password     string `json:"password" db:"password"`
 	Email        string `json:"email" db:"email"` // 邮箱
 	IsAdmin      bool   `json:"is_admin" db:"is_admin"`
@@ -52,22 +51,6 @@ type RegisterForm struct {
 type SetUserEmailForm struct {
 	Email string `json:"email" binding:"required"`
 	Code  string `json:"code" `
-}
-
-// SetUserPasswordForm 修改用户密码请求参数
-type SetUserPasswordForm struct {
-	NewPassword string `json:"newpassword" binding:"required"`
-	OldPassword string `json:"oldpassword" binding:"required"`
-}
-
-// SetUserInformationForm 修改用户信息请求参数
-type SetUserInformationForm struct {
-	Nickname string `json:"nickname" binding:"required"`
-	Avatar   string `json:"avatar" binding:"required"`
-	Password string `json:"password" binding:"required"`
-	IsAdmin  bool   `json:"is_admin" binding:"required"`
-	Email    string `json:"email" binding:"required"`
-}
 
 // Request
 type LoginRequest struct {
