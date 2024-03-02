@@ -41,10 +41,21 @@ func SetupRouter(mode string) *gin.Engine {
 	users.POST("/", controller.SignUpHandler) // 注册业务
 	users.GET("/:uid", controller.GetUserHandler)
 	users.GET("/", controller.GetAllUserHandler)
-  users.PUT("/email/:uid", controller.SetUserEmailHandler) //
-  
+	users.PUT("/email/:uid", controller.SetUserEmailHandler) //
+
 	login := v1.Group("/login")
 	login.POST("/", controller.LoginHandler)
+	// 固定对话业务
+	staticCon := v1.Group("/staticCon")
+	staticCon.GET("/:cid", controller.GetSceneDialogue) //获取特定场景对话
+
+	// 历史记录业务
+	history := v1.Group("/history")
+
+	// 学习记录业务
+	conversation := v1.Group("/conversation")
+
+	//场景提示业务
 
 	/*v1.GET("/refresh_token", controller.RefreshTokenHandler) // 刷新accessToken
 	// 帖子业务

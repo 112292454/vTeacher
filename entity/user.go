@@ -51,6 +51,7 @@ type RegisterForm struct {
 type SetUserEmailForm struct {
 	Email string `json:"email" binding:"required"`
 	Code  string `json:"code" `
+}
 
 // Request
 type LoginRequest struct {
