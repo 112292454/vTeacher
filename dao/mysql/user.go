@@ -125,6 +125,11 @@ func InternalGetUserByID(id uint64) (user *entity.User, err error) {
 	err = db.Get(user, sqlStr, id)
 	return
 }
+
+func GetSceneByName() {
+
+}
+
 func UpdateUser(user *entity.User) (res sql.Result, err error) {
 	sqlStr := `UPDATE vTeacher.user
     SET avatar = :avatar, email = :email, is_admin = :is_admin, level = :level, nick_name = :nick_name, password = :password, user_name = :user_name
