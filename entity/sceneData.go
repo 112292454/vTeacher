@@ -1,7 +1,8 @@
 package entity
 
 type SceneData struct {
-	Scenes    map[string]DialoguePair `json:"scenes" db:"scenes"` // scenes是一个Scene对象的数组，每个Scene包含教师和学生的对话
+	Teacher   []string `json:"teacher" db:"teacher"` // teacher是一个字符串数组，存储该场景中教师的若干句话
+	Student   []string `json:"student" db:"student"` // student是一个字符串数组，存储该场景中学生的若干句话
 	SceneName string
 }
 

@@ -19,7 +19,7 @@ func GetSceneDialogue(c *gin.Context) {
 
 	// 假设从某处获取到所有场景的数据，这里以一个示例静态数据替代
 	// 实际应用中，你可能需要从数据库或其他数据源中查询这些数据
-	scenes := []entity.sceneData{
+	scenes := []entity.SceneData{
 		// 示例数据
 	}
 

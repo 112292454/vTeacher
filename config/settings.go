@@ -55,7 +55,7 @@ func Init() error {
 	viper.WatchConfig()
 	// 监听配置文件变化
 	viper.OnConfigChange(func(in fsnotify.Event) {
-		fmt.Println("夭寿啦~配置文件被人修改啦...")
+		fmt.Println("配置文件被人修改啦...")
 		viper.Unmarshal(&Conf)
 	})
 	// 查找并读取配置文件

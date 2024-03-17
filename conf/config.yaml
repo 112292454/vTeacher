@@ -1,8 +1,8 @@
-name: "bluebell"
+name: "vTeacher"
 mode: "dev"
 port: 8081
 version: "v0.0.1"
-start_time: "2022-02-09"
+start_time: "2023-02-09"
 machine_id: 1
 
 auth:
@@ -10,13 +10,13 @@ auth:
 
 log:
   level: "debug"
-  filename: "./log/bluebell.log"
+  filename: "./log/vTeacher.log"
   max_size: 1000
   max_age: 3600
   max_backups: 5
 
 mysql:
-  host: "database.nginx.show"
+  host: "ipv4.nginx.show"
   port: 3306
   user: "vTeacher"
   password: "vTeacher1154459434"

@@ -3,39 +3,36 @@ package mysql
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/jmoiron/sqlx"
 	"log"
 	"vTeacher/entity"
 )
 
-var db *sqlx.DB
+// var db *sqlx.DB
 
 func insertScenesAndDialogues(sceneData entity.SceneData) error {
-	for sceneName, dialoguePairs := range sceneData.Scenes {
-		// 插入场景
-		result, err := db.Exec("INSERT INTO Scenes (Name) VALUES (?)", sceneName)
-		if err != nil {
-			return fmt.Errorf("inserting scene %s failed: %v", sceneName, err)
-		}
-		sceneID, err := result.LastInsertId()
-		if err != nil {
-			return fmt.Errorf("getting last insert ID for scene %s failed: %v", sceneName, err)
-		}
+	sceneName := sceneData.SceneName
 
-		// 插入对话
-		for _, pair := range dialoguePairs {
-			for _, teacherDialogue := range pair.Teacher {
-				_, err := db.Exec("INSERT INTO TeacherDialogues (SceneID, Dialogue) VALUES (?, ?)", sceneID, teacherDialogue)
-				if err != nil {
-					return fmt.Errorf("inserting teacher dialogue failed: %v", err)
-				}
-			}
-			for _, studentDialogue := range pair.Student {
-				_, err := db.Exec("INSERT INTO StudentDialogues (SceneID, Dialogue) VALUES (?, ?)", sceneID, studentDialogue)
-				if err != nil {
-					return fmt.Errorf("inserting student dialogue failed: %v", err)
-				}
-			}
+	// 插入场景
+	result, err := db.Exec("INSERT INTO Scenes (Name) VALUES (?)", sceneName)
+	if err != nil {
+		return fmt.Errorf("inserting scene %s failed: %v", sceneName, err)
+	}
+	sceneID, err := result.LastInsertId()
+	if err != nil {
+		return fmt.Errorf("getting last insert ID for scene %s failed: %v", sceneName, err)
+	}
+
+	// 插入对话
+	for _, teacherDialogue := range sceneData.Teacher {
+		_, err := db.Exec("INSERT INTO TeacherDialogues (SceneID, Dialogue) VALUES (?, ?)", sceneID, teacherDialogue)
+		if err != nil {
+			return fmt.Errorf("inserting teacher dialogue failed: %v", err)
+		}
+	}
+	for _, studentDialogue := range sceneData.Student {
+		_, err := db.Exec("INSERT INTO StudentDialogues (SceneID, Dialogue) VALUES (?, ?)", sceneID, studentDialogue)
+		if err != nil {
+			return fmt.Errorf("inserting student dialogue failed: %v", err)
 		}
 	}
 
@@ -47,7 +44,7 @@ func insertDialogues() {
 	jsonStr := `这里是你的JSON字符串`
 
 	// 解析JSON数据
-	var sceneData SceneData
+	var sceneData entity.SceneData
 	if err := json.Unmarshal([]byte(jsonStr), &sceneData); err != nil {
 		log.Fatalf("JSON unmarshal error: %v", err)
 	}
